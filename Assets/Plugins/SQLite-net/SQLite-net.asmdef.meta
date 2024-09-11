@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 56bbfea4e15e84cbc8b2efac5a2592a3
+AssemblyDefinitionImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 102632
+  packageName: uMMORPG 2D Remastered - MMORPG Engine
+  packageVersion: 2.13
+  assetPath: Assets/Plugins/Sqlite/sqlite_csharp/SQLite-net/SQLite-net.asmdef
+  uploadId: 574567
