@@ -26,9 +26,9 @@ namespace Data
 				{
 						var saveData = new
 						{
-							Character = modelToSave.Name,
+							Name = modelToSave.Name,
 							Lvl = modelToSave.Lvl,
-							Inventory = modelToSave.Invetory,
+							Invetory = modelToSave.Invetory,
 						};
 
 						string jsonObject = JsonConvert.SerializeObject(saveData);

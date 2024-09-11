@@ -29,9 +29,21 @@ namespace Data
             _database.SaveCharacterData(_characterSetup);
         }
 
-        public void LoadCharacterData()
+        public async void LoadCharacterData()
         {
-
+          _characterSetup = await _database.LoadCharacterData(_characterSetup);
+          if (_characterSetup != null)
+          {
+              Debug.Log(_characterSetup.Name);
+              Debug.Log(_characterSetup.Invetory);
+              Debug.Log(_characterSetup.Lvl);
+              SendLog(_characterSetup);
+          }
+          else
+          {
+              Debug.Log("DATABASE RETURN NULL");
+          }
+            
         }
 
         public void InitializeCharacter()
