@@ -1,9 +1,6 @@
 using System;
 using TMPro;
 using UnityEngine;
-using UnityEngine.PlayerLoop;
-using UnityEngine.UI;
-
 
 namespace Data
 {
@@ -21,7 +18,6 @@ namespace Data
         public void Start()
         {
             InitilizeFields();
-            Debug.Log("Spawn");
         }
 
         public void SaveCharacterData()
@@ -32,25 +28,14 @@ namespace Data
         public async void LoadCharacterData()
         {
           _characterSetup = await _database.LoadCharacterData(_characterSetup);
-          if (_characterSetup != null)
-          {
-              Debug.Log(_characterSetup.Name);
-              Debug.Log(_characterSetup.Invetory);
-              Debug.Log(_characterSetup.Lvl);
-              SendLog(_characterSetup);
-          }
-          else
-          {
-              Debug.Log("DATABASE RETURN NULL");
-          }
-            
+          SendLog(_characterSetup);
         }
 
         public void InitializeCharacter()
         {
             _randomCharacter = _generateData.GetRandomCharacter();
             _characterSetup.Name = _randomCharacter.RandomName;
-            _characterSetup.Invetory = _randomCharacter.RandomInventory;
+            _characterSetup.Inventory = _randomCharacter.RandomInventory;
             _characterSetup.Lvl = _randomCharacter.RandomLvl;
             SendLog(_characterSetup);
         }
@@ -67,7 +52,7 @@ namespace Data
         {
 
             _debugLog.text = $"Name: {character.Name} \n" +
-                             $"Inventory: {string.Join(", ",character.Invetory)} \n" +
+                             $"Inventory: {string.Join(", ",character.Inventory)} \n" +
                              $"Lvl: {character.Lvl}";
         }
 

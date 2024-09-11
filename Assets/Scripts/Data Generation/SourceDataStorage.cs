@@ -5,16 +5,12 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "SourceDataStorage", menuName = "Scriptable Objects/SourceDataStorage")]
 public sealed class SourceDataStorage : ScriptableObject
 {
-    public CharacterSetup[] CharacterSetups
-    {
-        get { return _character; }
-    }
     
     [SerializeField] private CharacterSetup[] _character;
 
     public void SetData(CharacterSetup characterSetup)
     {
-        _character[0].Invetory = characterSetup.Invetory;
+        _character[0].Inventory = characterSetup.Inventory;
         _character[0].Name = characterSetup.Name;
         _character[0].Lvl = characterSetup.Lvl;
     }
@@ -37,7 +33,7 @@ public sealed class CharacterSetup
         set { _lvl = value; }
     }
 
-    public int[] Invetory
+    public int[] Inventory
     {
         get { return _inventory; }
         set { _inventory = value; }

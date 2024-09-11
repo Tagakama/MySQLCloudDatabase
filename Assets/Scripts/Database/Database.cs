@@ -31,7 +31,7 @@ namespace Data
 		{
 
 			SqlDataBase.logState = SqlDataBase.LogState.Enabled;
-			connectionString = "Server=185.255.133.194;Database=test;User ID=user_cli;Password=passworD123!;Pooling=true;";
+			connectionString = "Server=0.0.0.0;Database=test;User ID=test;Password=password;Pooling=true;";
 			OpenConnectionAsync();
 
 			Connect();
@@ -43,37 +43,6 @@ namespace Data
 			asyncConnection = null;
 			CloseConnection();
 			Debug.Log("DataBase Destroyed");
-		}
-
-		private void OpenConnection()
-		{
-			using (_sqlConnection = new MySqlConnection(connectionString))
-			{
-				try
-				{
-					_sqlConnection.Open();
-					Debug.Log("Подключение к базе данных успешно!");
-
-
-					/*
-					// Пример выполнения запроса
-					string query = "SELECT * FROM users";
-					MySqlCommand cmd = new MySqlCommand(query, _sqlConnection);
-					MySqlDataReader dataReader = cmd.ExecuteReader();
-
-					while (dataReader.Read())
-					{
-						Debug.Log("ID: " + dataReader["id"] + ", Username: " + dataReader["username"]);
-					}
-
-					dataReader.Close();
-					*/
-				}
-				catch (Exception ex)
-				{
-					Debug.LogError("Ошибка подключения к базе данных: " + ex.Message);
-				}
-			}
 		}
 
 		void CloseConnection()
@@ -112,107 +81,7 @@ namespace Data
 
 			Debug.Log("connected to database");
 		}
-
-		async UniTask CloseConnectionAsync()
-		{
-			if (_sqlConnection != null && _sqlConnection.State == System.Data.ConnectionState.Open)
-			{
-				await _sqlConnection.CloseAsync();
-				_sqlConnection = null;
-				Debug.Log("Connection closed.");
-			}
-		}
-
-		public async UniTask<bool> TableExists(string tableName)
-		{
-			await OpenConnectionAsync();
-			bool exists = false;
-			string query = $"SHOW TABLES LIKE '{tableName}'";
-
-			MySqlCommand cmd = new MySqlCommand(query, _sqlConnection);
-			try
-			{
-				var dataReader = await cmd.ExecuteReaderAsync();
-				exists = dataReader.HasRows;
-				await dataReader.CloseAsync();
-			}
-			catch (MySqlException ex)
-			{
-				Debug.LogError("Error: " + ex.Message);
-			}
-
-
-			return exists;
-		}
-
-		public void DeleteTable(string tableName)
-		{
-			OpenConnectionAsync();
-			string query = $"DROP TABLE {tableName}";
-
-			MySqlCommand cmd = new MySqlCommand(query, _sqlConnection);
-			try
-			{
-				cmd.ExecuteNonQuery();
-				Debug.Log("Table deleted successfully.");
-			}
-			catch (MySqlException ex)
-			{
-				Debug.LogError("Error: " + ex.Message);
-			}
-		}
-
-		public async Task<bool> IsRecordExists(string username, string password)
-		{
-			await OpenConnectionAsync();
-			bool recordExists = false;
-			string query = "SELECT COUNT(*) FROM LoginTable WHERE username = @UserName AND password = @Password";
-
-			MySqlCommand cmd = new MySqlCommand(query, _sqlConnection);
-			cmd.Parameters.AddWithValue("@username", username);
-			cmd.Parameters.AddWithValue("@password", password);
-
-			try
-			{
-				recordExists = Convert.ToInt32(cmd.ExecuteScalar()) > 0;
-			}
-			catch (MySqlException ex)
-			{
-				Debug.LogError("Error: " + ex.Message);
-			}
-
-
-			return recordExists;
-		}
-
-		public async UniTask<bool> DoesUserExistAsync(string username, string tableName)
-		{
-			await OpenConnectionAsync();
-
-			string query = $"SELECT 1 FROM {tableName} WHERE username = @username LIMIT 1";
-			MySqlCommand cmd = new MySqlCommand(query, _sqlConnection);
-			cmd.Parameters.AddWithValue("@username", username);
-
-			bool userExists = false;
-
-			try
-			{
-				using (var reader = await cmd.ExecuteReaderAsync())
-				{
-					if (await reader.ReadAsync())
-					{
-						userExists = true;
-					}
-				}
-			}
-			catch (MySqlException ex)
-			{
-				Debug.LogError("Error executing query: " + ex.Message);
-			}
-
-			return userExists;
-		}
-
+		
 		async UniTask OpenConnectionAsync()
 		{
 			if (_sqlConnection == null || _sqlConnection.State == ConnectionState.Closed)
@@ -231,87 +100,7 @@ namespace Data
 			}
 		}
 
-		public async UniTask CreateRecord(string username, string password)
-		{
-			await OpenConnectionAsync();
-			string query = "INSERT INTO LoginTable (username, password) VALUES (@username, @password)";
-
-			MySqlCommand cmd = new MySqlCommand(query, _sqlConnection);
-			cmd.Parameters.AddWithValue("@username", username);
-			cmd.Parameters.AddWithValue("@password", password);
-
-			try
-			{
-				int rowsAffected = await cmd.ExecuteNonQueryAsync();
-				Debug.Log("Record created successfully. Rows affected: " + rowsAffected);
-			}
-			catch (MySqlException ex)
-			{
-				Debug.LogError("Error: " + ex.Message);
-			}
-		}
-
-
-		public async UniTask CreateLoginTable(string tableName)
-		{
-			await OpenConnectionAsync();
-			string query = $"CREATE TABLE {tableName} (ID INT AUTO_INCREMENT PRIMARY KEY, UserName VARCHAR(100), Password VARCHAR(100))";
-
-			MySqlCommand cmd = new MySqlCommand(query, _sqlConnection);
-			try
-			{
-				await cmd.ExecuteNonQueryAsync();
-				Debug.Log("Table created successfully.");
-			}
-			catch (MySqlException ex)
-			{
-				Debug.LogError("Error: " + ex.Message);
-			}
-		}
-
-		public async UniTask CreateDataTable(string tableName)
-		{
-			await OpenConnectionAsync();
-
-			string query = $@"CREATE TABLE `{tableName}` (
-			Username VARCHAR(255) NOT NULL,
-				jsonObject JSON,
-			PRIMARY KEY (Username)
-				);";
-
-			MySqlCommand cmd = new MySqlCommand(query, _sqlConnection);
-			try
-			{
-				await cmd.ExecuteNonQueryAsync();
-				Debug.Log("Table created successfully.");
-			}
-			catch (MySqlException ex)
-			{
-				Debug.LogError("Error: " + ex.Message);
-			}
-		}
-
-		public async UniTask ClearRowContent(string username, string tableName)
-		{
-			await OpenConnectionAsync();
-			string query = $@"
-        UPDATE `{tableName}`
-        SET jsonObject = '{""}'
-        WHERE Username = @username;";
-
-			MySqlCommand cmd = new MySqlCommand(query, _sqlConnection);
-			cmd.Parameters.AddWithValue("@username", username);
-
-			try
-			{
-				int rowsAffected = await cmd.ExecuteNonQueryAsync();
-				Debug.Log($"Rows affected: {rowsAffected}");
-			}
-			catch (MySqlException ex)
-			{
-				Debug.LogError("Error executing query: " + ex.Message);
-			}
-		}
+		
 
 		// close connection when Unity closes to prevent locking
 		void OnApplicationQuit()

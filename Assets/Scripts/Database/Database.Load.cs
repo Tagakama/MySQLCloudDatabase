@@ -50,7 +50,6 @@ namespace Data
 				{
 					if (await reader.ReadAsync())
 					{
-						// Получаем данные из конкретного столбца
 						playerData = reader[columnName]?.ToString();
 					}
 				}
@@ -58,32 +57,22 @@ namespace Data
 			catch (MySqlException ex)
 			{
 				Debug.LogError("Error executing query: " + ex.Message);
-				return default(T); // Возвращаем значение по умолчанию в случае ошибки запроса
 			}
 
 			if (!string.IsNullOrEmpty(playerData))
 			{
 				try
 				{
-					// Логируем данные перед десериализацией
-					Debug.Log("PlayerData JSON: " + playerData);
-            
-					// Попытка десериализации
 					var result = JsonConvert.DeserializeObject<T>(playerData);
-
-					// Логируем успешную десериализацию
-					Debug.Log("Deserialization complete: " + result);
-            
 					return result;
 				}
 				catch (JsonException jsonEx)
 				{
-					// Ловим ошибки десериализации
 					Debug.LogError("Error deserializing JSON: " + jsonEx.Message);
 				}
 			}
 
-			return default(T); // Возвращаем значение по умолчанию, если данных нет или произошла ошибка
+			return default(T);
 		}
 		
 	}

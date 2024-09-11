@@ -1,12 +1,7 @@
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text.RegularExpressions;
 using Cysharp.Threading.Tasks;
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
-using UnityEngine;
 using Debug = UnityEngine.Debug;
 
 namespace Data
@@ -28,7 +23,7 @@ namespace Data
 						{
 							Name = modelToSave.Name,
 							Lvl = modelToSave.Lvl,
-							Invetory = modelToSave.Invetory,
+							Inventory = modelToSave.Inventory,
 						};
 
 						string jsonObject = JsonConvert.SerializeObject(saveData);
